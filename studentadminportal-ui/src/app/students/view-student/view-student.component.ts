@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
+import { Gender } from 'src/app/models/ui-models/gender.model';
 import { Student } from 'src/app/models/ui-models/student.model';
+import { GenderService } from 'src/app/services/gender.service';
 import { StudentService } from '../student.service';
 
 @Component({
@@ -9,7 +12,7 @@ import { StudentService } from '../student.service';
   styleUrls: ['./view-student.component.css']
 })
 export class ViewStudentComponent implements OnInit {
-  studentId: String | null | undefined;
+  studentId: string | null | undefined;
   student: Student = {
     id: '',
     firstName: '',
@@ -17,8 +20,8 @@ export class ViewStudentComponent implements OnInit {
     dateOfBirth: '',
     email: '',
     mobile: 0,
-    profileImageUrl: '',
     genderId: '',
+    profileImageUrl: '',
     gender: {
       id: '',
       description: ''
@@ -30,23 +33,52 @@ export class ViewStudentComponent implements OnInit {
     }
   }
 
+  genderList: Gender[] = [];
+
   constructor(private readonly studentService: StudentService,
-    private readonly route: ActivatedRoute) { }
+    private readonly route: ActivatedRoute,
+    private readonly genderService: GenderService,
+    private snackbar: MatSnackBar) { }
+
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(
       (params) => {
-        this.studentId = params.get('id')
-        if(this.studentId){
+        this.studentId = params.get('id');
+
+        if (this.studentId) {
           this.studentService.getStudent(this.studentId)
-          .subscribe(
-            (successResponse) => {
-              this.student = successResponse;
-            }
-          );
+            .subscribe(
+              (successResponse) => {
+                this.student = successResponse;
+              }
+            );
+
+          this.genderService.getGenderList()
+            .subscribe(
+              (successResponse) => {
+                this.genderList = successResponse;
+              }
+            );
         }
       }
     );
   }
 
+  onUpdate(): void {
+    this.studentService.updateStudent(this.student.id, this.student)
+      .subscribe(
+        (successResponse) => {
+          // Show a notification
+          this.snackbar.open('Student updated successfully', undefined, {
+            duration: 2000
+          });
+        },
+        (errorResponse) => {
+          // Log it
+        }
+      );
+
+
+  }
 }

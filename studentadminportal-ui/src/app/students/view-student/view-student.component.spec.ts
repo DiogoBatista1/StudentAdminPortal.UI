@@ -11,7 +11,9 @@ describe('ViewStudentComponent', () => {
       declarations: [ ViewStudentComponent ]
     })
     .compileComponents();
+  });
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(ViewStudentComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

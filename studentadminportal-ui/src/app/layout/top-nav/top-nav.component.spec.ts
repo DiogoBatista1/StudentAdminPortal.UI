@@ -11,7 +11,9 @@ describe('TopNavComponent', () => {
       declarations: [ TopNavComponent ]
     })
     .compileComponents();
+  });
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(TopNavComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
